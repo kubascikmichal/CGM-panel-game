@@ -4,7 +4,7 @@ Panel::Panel()
 {
     matrix = new Adafruit_NeoMatrix(64, 32, 15);
     init();
-
+}
 int Panel::len(const char *str, int length)
 {
     int size = 0;
