@@ -2,7 +2,7 @@
 
 Panel::Panel()
 {
-    matrix = new Adafruit_NeoMatrix(64, 32, 15);
+    matrix = new Adafruit_NeoMatrix(64, 16, 1);
     init();
 }
 int Panel::len(const char *str, int length)
@@ -52,12 +52,9 @@ uint16_t Panel::ledInPanel(uint16_t x, uint16_t y, bool odd)
 }
 uint16_t Panel::myRemapFn(uint16_t x, uint16_t y)
 {
-    int panel_X = x / PANEL_W;
-    int panel_Y = y / PANEL_H;
-    int base_matrix[2][4] = {{0, 3, 4, 7},
-                             {1, 2, 5, 6}};
-
-    return PANEL_COUNT * base_matrix[panel_Y][panel_X] + ledInPanel(x % PANEL_W, y % PANEL_H, panel_X % 2);
+    int panel = x / 16;
+    int row = y / 16;
+    return 256 * panel + 16*(16-y-1) + ((y % 2) ? (x % 16) : 16 - (x % 16)-1);
 }
 
 void Panel::init()
@@ -66,13 +63,40 @@ void Panel::init()
     matrix->begin();
     matrix->setTextWrap(false);
     matrix->setBrightness(10);
-    matrix->setFont(&dotmat10pt7b_v2);
+    matrix->setFont(&font);
 }
 
 void Panel::run()
 {
+    int index = 0;
     while (true)
     {
-        
+        matrix->clear();
+        matrix->setTextColor(matrix->Color(0, 255, 0));
+        matrix->setCursor(index, 8);
+        matrix->print("ANDREJ: 6.2");
+        matrix->setTextColor(matrix->Color(255, 0, 0));
+        matrix->setCursor(index, 16);
+        matrix->print("MICHAL: 3.5");
+        matrix->show();
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        matrix->clear();
+        matrix->setTextColor(matrix->Color(255, 125, 0));
+        matrix->setCursor(index, 8);
+        matrix->print("ANDREJ: 12.0");
+        matrix->setTextColor(matrix->Color(255, 255, 0));
+        matrix->setCursor(index, 16);
+        matrix->print("MICHAL: 4.2");
+        matrix->show();
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        matrix->clear();
+        matrix->setTextColor(matrix->Color(0, 255, 0));
+        matrix->setCursor(index, 8);
+        matrix->print("ANDREJ: 5.5");
+        matrix->setTextColor(matrix->Color(255, 0, 255));
+        matrix->setCursor(index, 16);
+        matrix->print("MICHAL: 15.6");
+        matrix->show();
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
